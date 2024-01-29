@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { nanoid } from 'nanoid';
 import { Button, Form, Input, Label } from './ContactForm.styled';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
 
-const ContactForm = ({ onFormSubmit }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    number: '',
-  });
+const ContactForm = () => {
+  const [newContact, setNewContact] = useState({ name: '', number: '' });
+  const dispatch = useDispatch();
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setFormData(prevFormData => ({
+    setNewContact(prevFormData => ({
       ...prevFormData,
       [name]: value,
     }));
@@ -18,21 +17,9 @@ const ContactForm = ({ onFormSubmit }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-
-    const { name, number } = formData;
-    onFormSubmit({
-      id: nanoid(),
-      name,
-      number,
-    });
-
-    setFormData({
-      name: '',
-      number: '',
-    });
+    dispatch(addContact(newContact));
+    setNewContact({ name: '', number: '' });
   };
-
-  const { name, number } = formData;
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -41,7 +28,7 @@ const ContactForm = ({ onFormSubmit }) => {
         <Input
           type="text"
           name="name"
-          value={name}
+          value={newContact.name}
           onChange={handleChange}
           required
         />
@@ -52,7 +39,7 @@ const ContactForm = ({ onFormSubmit }) => {
         <Input
           type="tel"
           name="number"
-          value={number}
+          value={newContact.number}
           onChange={handleChange}
           required
         />
