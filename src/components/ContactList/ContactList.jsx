@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact } from '../../redux/contactsSlice';
-import { nanoid } from '@reduxjs/toolkit';
 
 const ContactList = () => {
-  const contacts = useSelector(state => {
-    const { filter, contacts } = state.contacts;
+  const contactsData = useSelector(state => state.contacts);
+
+  const contacts = useMemo(() => {
+    const { filter, contacts } = contactsData;
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
-  });
+  }, [contactsData]);
+
   const dispatch = useDispatch();
 
   return (
     <ul>
       {contacts.map(contact => (
         <ContactItem
-          key={nanoid()}
+          key={contact.id}
           contact={contact}
           onDelete={() => dispatch(deleteContact(contact.id))}
         />
